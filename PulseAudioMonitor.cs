@@ -3,18 +3,35 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
+using Debug = UnityEngine.Debug;
 
 namespace NnUtils.Modules.SystemAudioMonitor
 {
-    public class PulseAudioMonitor
+    public class PulseAudioMonitor : AudioMonitor
     {
         private Process _paMonitorProcess;
         private bool _isRunning;
         private CancellationTokenSource _cancellationTokenSource;
 
-        public float Loudness { get; private set; }
+        public readonly string Name;
+        public readonly string StreamName;
+        public readonly string Device;
+        public readonly int Volume;
+        public readonly int Rate;
+        public readonly int BufferSize;
 
-        public async Task StartMonitoring(string name = "", string streamName = "Output Device Monitor", string device = "@DEFAULT_MONITOR@", int volume = 65536, int rate = 44100, int bufferSize = 2048)
+        public PulseAudioMonitor(string name = "", string streamName = "Output Device Monitor", string device = "@DEFAULT_MONITOR@", int volume = 65536, int rate = 44100, int bufferSize = 2048)
+        {
+            Name = name;
+            StreamName = streamName;
+            Device = device;
+            Volume = volume;
+            Rate = rate;
+            BufferSize = bufferSize;
+        }
+        
+        public override async Task Start()
         {
             if (_isRunning) return;
             _isRunning               = true;
@@ -25,7 +42,7 @@ namespace NnUtils.Modules.SystemAudioMonitor
                 StartInfo = new()
                 {
                     FileName               = "parec",
-                    Arguments              = $"-n '{name}' --stream-name '{streamName}' -d {device} --volume {volume} --rate={rate} --channels=1 --format=float32le --latency-msec=1",
+                    Arguments              = $"-n '{Name}' --stream-name '{StreamName}' -d {Device} --volume {Volume} --rate={Rate} --channels=1 --format=float32le --latency-msec=1",
                     RedirectStandardOutput = true,
                     UseShellExecute        = false,
                     CreateNoWindow         = true
@@ -34,7 +51,7 @@ namespace NnUtils.Modules.SystemAudioMonitor
 
             _paMonitorProcess.Start();
 
-            await Task.Run(() => MonitorAudio(_cancellationTokenSource.Token, bufferSize), _cancellationTokenSource.Token);
+            await Task.Run(() => MonitorAudio(_cancellationTokenSource.Token, BufferSize), _cancellationTokenSource.Token);
         }
 
         private void MonitorAudio(CancellationToken token, int bufferSize)
@@ -77,7 +94,7 @@ namespace NnUtils.Modules.SystemAudioMonitor
             return maxSample;
         }
 
-        public void StopMonitoring()
+        private void StopMonitoring()
         {
             if (!_isRunning) return;
             _cancellationTokenSource?.Cancel();
@@ -89,6 +106,11 @@ namespace NnUtils.Modules.SystemAudioMonitor
             }
 
             _isRunning = false;
+        }
+
+        public override void Dispose()
+        {
+            StopMonitoring();
         }
     }
 }
