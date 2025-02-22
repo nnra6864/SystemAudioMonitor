@@ -4,7 +4,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace NnUtils.Modules.AudioMonitor
+namespace NnUtils.Modules.SystemAudioMonitor
 {
     public class PulseAudioMonitor
     {
