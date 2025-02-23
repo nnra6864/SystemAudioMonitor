@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
-using NnUtils.Modules.SystemAudioMonitor.Windows.Interfaces;
+using NnUtils.Modules.SystemAudioMonitor.CoreAudio.Interfaces;
 
-namespace NnUtils.Modules.SystemAudioMonitor.Windows
+namespace NnUtils.Modules.SystemAudioMonitor.CoreAudio
 {
     public class AudioMeterInformation
     {

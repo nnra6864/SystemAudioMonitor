@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace NnUtils.Modules.SystemAudioMonitor.Windows.Interfaces
+namespace NnUtils.Modules.SystemAudioMonitor.CoreAudio.Interfaces
 {
     /// <summary>
     /// implements IMMDeviceEnumerator

@@ -1,4 +1,4 @@
-namespace NnUtils.Modules.SystemAudioMonitor.Windows
+namespace NnUtils.Modules.SystemAudioMonitor.CoreAudio
 {
     /// <summary>
     /// The ERole enumeration defines constants that indicate the role 

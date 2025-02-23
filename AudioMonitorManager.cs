@@ -1,5 +1,5 @@
 using System;
-using NnUtils.Modules.SystemAudioMonitor.Windows;
+using NnUtils.Modules.SystemAudioMonitor.CoreAudio;
 
 namespace NnUtils.Modules.SystemAudioMonitor
 {

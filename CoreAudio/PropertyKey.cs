@@ -1,6 +1,6 @@
 using System;
 
-namespace NnUtils.Modules.SystemAudioMonitor.Windows
+namespace NnUtils.Modules.SystemAudioMonitor.CoreAudio
 {
     /// <summary>
     /// PROPERTYKEY is defined in wtypes.h
