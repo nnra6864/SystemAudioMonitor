@@ -1,6 +1,6 @@
 using System;
 
-namespace NnUtils.Modules.SystemAudioMonitor
+namespace NnUtils.Modules.SystemAudioMonitor.Windows
 {
     /// <summary>
     /// Representation of binary large object container.

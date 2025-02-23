@@ -1,7 +1,7 @@
 using System;
 
 // ReSharper disable InconsistentNaming
-namespace NnUtils.Modules.SystemAudioMonitor
+namespace NnUtils.Modules.SystemAudioMonitor.Windows
 {
     /// <summary>
     /// is defined in WTypes.h

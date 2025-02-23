@@ -1,4 +1,4 @@
-namespace NnUtils.Modules.SystemAudioMonitor
+namespace NnUtils.Modules.SystemAudioMonitor.Windows
 {
     public enum AudioCaptureType
     {

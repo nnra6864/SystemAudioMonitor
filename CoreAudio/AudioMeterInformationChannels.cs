@@ -1,7 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
+using NnUtils.Modules.SystemAudioMonitor.Windows.Interfaces;
 
-namespace NnUtils.Modules.SystemAudioMonitor
+namespace NnUtils.Modules.SystemAudioMonitor.Windows
 {
     /// <summary>
     /// Audio Meter Information Channels
