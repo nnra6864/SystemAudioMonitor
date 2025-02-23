@@ -2,7 +2,7 @@ using System;
 
 namespace NnUtils.Modules.SystemAudioMonitor
 {
-    public class AudioMonitor : IDisposable
+    public abstract class AudioMonitor : IDisposable
     {
         public Func<float> Loudness { get; protected set; }
         
