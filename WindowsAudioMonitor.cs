@@ -35,6 +35,6 @@ namespace NnUtils.Modules.SystemAudioMonitor
             _audioMeterInformation = new AudioMeterInformation(result as IAudioMeterInformation);
         }
         
-        public override void Start() => Loudness = _audioMeterInformation.MasterPeakValue;
+        public override void Start() => Loudness = AudioMeterInformation.MasterPeakValue;
     }
 }
