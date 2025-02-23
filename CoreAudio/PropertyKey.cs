@@ -1,3 +1,6 @@
+// Original Code
+// https://github.com/naudio/NAudio/blob/master/NAudio.Wasapi/CoreAudioApi/PropertyKey.cs
+
 using System;
 // ReSharper disable InconsistentNaming
 

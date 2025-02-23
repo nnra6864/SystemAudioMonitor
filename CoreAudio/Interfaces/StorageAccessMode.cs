@@ -1,4 +1,7 @@
-namespace NnUtils.Modules.SystemAudioMonitor.CoreAudio
+// Original Code
+// https://github.com/naudio/NAudio/blob/master/NAudio.Wasapi/CoreAudioApi/Interfaces/StorageAccessMode.cs
+
+namespace NnUtils.Modules.SystemAudioMonitor.CoreAudio.Interfaces
 {
     /// <summary>
     /// MMDevice STGM enumeration

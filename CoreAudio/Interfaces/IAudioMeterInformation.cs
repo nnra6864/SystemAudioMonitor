@@ -1,3 +1,6 @@
+// Original Code
+// https://github.com/naudio/NAudio/blob/master/NAudio.Wasapi/CoreAudioApi/Interfaces/IAudioMeterInformation.cs
+
 using System;
 using System.Runtime.InteropServices;
 

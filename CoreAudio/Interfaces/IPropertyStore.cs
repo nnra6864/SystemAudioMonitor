@@ -1,3 +1,6 @@
+// Original Code
+// https://github.com/naudio/NAudio/blob/master/NAudio.Wasapi/CoreAudioApi/Interfaces/IPropertyStore.cs
+
 using System.Runtime.InteropServices;
 
 namespace NnUtils.Modules.SystemAudioMonitor.CoreAudio.Interfaces

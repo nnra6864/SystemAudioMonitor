@@ -1,3 +1,6 @@
+// Original Code
+// https://github.com/naudio/NAudio/blob/master/NAudio.Wasapi/CoreAudioApi/EEndpointHardwareSupport.cs
+
 using System;
 
 namespace NnUtils.Modules.SystemAudioMonitor.CoreAudio

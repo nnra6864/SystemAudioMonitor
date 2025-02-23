@@ -1,3 +1,6 @@
+// Original Code
+// https://github.com/naudio/NAudio/blob/master/NAudio.Wasapi/CoreAudioApi/MMDeviceCollection.cs
+
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using NnUtils.Modules.SystemAudioMonitor.CoreAudio.Interfaces;

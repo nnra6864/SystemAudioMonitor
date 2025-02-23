@@ -1,6 +1,10 @@
+// Original Code
+// https://github.com/naudio/NAudio/blob/master/NAudio.Wasapi/CoreAudioApi/PropVariant.cs
+
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using NnUtils.Modules.SystemAudioMonitor.CoreAudio.Interfaces;
 
 namespace NnUtils.Modules.SystemAudioMonitor.CoreAudio
 {

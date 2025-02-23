@@ -1,3 +1,6 @@
+// Original Code
+// https://github.com/naudio/NAudio/blob/master/NAudio.Wasapi/CoreAudioApi/DataFlow.cs
+
 namespace NnUtils.Modules.SystemAudioMonitor.CoreAudio
 {
     /// <summary>
