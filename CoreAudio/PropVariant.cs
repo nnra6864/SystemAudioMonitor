@@ -127,23 +127,23 @@ namespace NnUtils.Modules.SystemAudioMonitor.CoreAudio
 
         private static class VT
         {
-            public const short I1 = 16;        // VT_I1
-            public const short I2 = 2;         // VT_I2
-            public const short I4 = 3;         // VT_I4
-            public const short I8 = 20;        // VT_I8
-            public const short INT = 22;       // VT_INT
-            public const short UI4 = 19;       // VT_UI4
-            public const short UI8 = 21;       // VT_UI8
-            public const short LPWSTR = 31;    // VT_LPWSTR
-            public const short BLOB = 65;      // VT_BLOB
+            public const short I1 = 16; // VT_I1
+            public const short I2 = 2; // VT_I2
+            public const short I4 = 3; // VT_I4
+            public const short I8 = 20; // VT_I8
+            public const short INT = 22; // VT_INT
+            public const short UI4 = 19; // VT_UI4
+            public const short UI8 = 21; // VT_UI8
+            public const short LPWSTR = 31; // VT_LPWSTR
+            public const short BLOB = 65; // VT_BLOB
             public const short VECTOR = 0x1000; // VT_VECTOR
-            public const short UI1 = 17;       // VT_UI1
-            public const short CLSID = 72;     // VT_CLSID
-            public const short BOOL = 11;      // VT_BOOL
-            public const short FILETIME = 64;  // VT_FILETIME
-            public const short EMPTY = 0;      // VT_EMPTY
+            public const short UI1 = 17; // VT_UI1
+            public const short CLSID = 72; // VT_CLSID
+            public const short BOOL = 11; // VT_BOOL
+            public const short FILETIME = 64; // VT_FILETIME
+            public const short EMPTY = 0; // VT_EMPTY
         }
-        
+
         /// <summary>
         /// Creates a new PropVariant containing a long value
         /// </summary>
