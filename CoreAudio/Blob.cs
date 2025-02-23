@@ -11,6 +11,7 @@ namespace NnUtils.Modules.SystemAudioMonitor.CoreAudio
         /// Length of binary object.
         /// </summary>
         public int Length;
+        
         /// <summary>
         /// Pointer to buffer storing data.
         /// </summary>

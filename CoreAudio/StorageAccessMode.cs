@@ -9,10 +9,12 @@ namespace NnUtils.Modules.SystemAudioMonitor.CoreAudio
         /// Read-only access mode.
         /// </summary>
         Read,
+        
         /// <summary>
         /// Write-only access mode.
         /// </summary>
         Write,
+        
         /// <summary>
         /// Read-write access mode.
         /// </summary>

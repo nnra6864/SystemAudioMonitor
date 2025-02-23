@@ -34,10 +34,7 @@ namespace NnUtils.Modules.SystemAudioMonitor.CoreAudio
             {
                 var channels = Count;
                 if (index >= channels)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(index),
-                        $"Peak index cannot be greater than number of channels ({channels})");
-                }
+                    throw new ArgumentOutOfRangeException(nameof(index), $"Peak index cannot be greater than number of channels ({channels})");
 
                 var peakValues = new float[Count];
                 var p = GCHandle.Alloc(peakValues, GCHandleType.Pinned);

@@ -6,9 +6,13 @@ namespace NnUtils.Modules.SystemAudioMonitor.CoreAudio
 {
     public class MMDevice
     {
-        #region Variables
+        // ReSharper disable InconsistentNaming
+        private static Guid IID_IAudioMeterInformation = new("C02216F6-8C67-4B5B-9D00-D008E73E0064");
+        // ReSharper restore InconsistentNaming
+        
         private readonly IMMDevice _deviceInterface;
         private AudioMeterInformation _audioMeterInformation;
+        
         /// <summary>
         /// Audio Meter Information
         /// </summary>
@@ -22,23 +26,13 @@ namespace NnUtils.Modules.SystemAudioMonitor.CoreAudio
                 return _audioMeterInformation;
             }
         }
-        #endregion
+        
+        internal MMDevice(IMMDevice realDevice) => _deviceInterface = realDevice;
 
-        #region Guids
-        // ReSharper disable InconsistentNaming
-        private static Guid IID_IAudioMeterInformation = new Guid("C02216F6-8C67-4B5B-9D00-D008E73E0064");
-        // ReSharper restore InconsistentNaming
-        #endregion
-        
-        internal MMDevice(IMMDevice realDevice)
-        {
-            _deviceInterface = realDevice;
-        }
-        
         private void GetAudioMeterInformation()
         {
             Marshal.ThrowExceptionForHR(_deviceInterface.Activate(ref IID_IAudioMeterInformation, ClsCtx.ALL, IntPtr.Zero, out var result));
-            _audioMeterInformation = new AudioMeterInformation(result as IAudioMeterInformation);
+            _audioMeterInformation = new(result as IAudioMeterInformation);
         }
     }
 }

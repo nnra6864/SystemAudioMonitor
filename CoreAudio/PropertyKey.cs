@@ -1,4 +1,5 @@
 using System;
+// ReSharper disable InconsistentNaming
 
 namespace NnUtils.Modules.SystemAudioMonitor.CoreAudio
 {
@@ -11,10 +12,12 @@ namespace NnUtils.Modules.SystemAudioMonitor.CoreAudio
         /// Format ID
         /// </summary>
         public Guid formatId;
+        
         /// <summary>
         /// Property ID
         /// </summary>
         public int propertyId;
+        
         /// <summary>
         /// <param name="formatId"></param>
         /// <param name="propertyId"></param>

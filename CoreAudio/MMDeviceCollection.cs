@@ -33,38 +33,21 @@ namespace NnUtils.Modules.SystemAudioMonitor.CoreAudio
             get
             {
                 _mmDeviceCollection.Item(index, out var result);
-                return new MMDevice(result);
+                return new(result);
             }
         }
 
-        internal MMDeviceCollection(IMMDeviceCollection parent)
-        {
-            _mmDeviceCollection = parent;
-        }
-
-        #region IEnumerable<MMDevice> Members
+        internal MMDeviceCollection(IMMDeviceCollection parent) => _mmDeviceCollection = parent;
 
         /// <summary>
         /// Get Enumerator
         /// </summary>
         /// <returns>Device enumerator</returns>
         public IEnumerator<MMDevice> GetEnumerator()
-        {            
-            for (int index = 0; index < Count; index++)
-            {
-                yield return this[index];
-            }
-        }
-
-        #endregion
-
-        #region IEnumerable Members
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            for (int index = 0; index < Count; index++) yield return this[index];
         }
 
-        #endregion
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }
