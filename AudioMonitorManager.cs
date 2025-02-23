@@ -1,22 +1,27 @@
+using System;
+
 namespace NnUtils.Modules.SystemAudioMonitor
 {
-    public class AudioMonitorManager
+    public class AudioMonitorManager : IDisposable
     {
         private AudioMonitor _audioMonitor;
-
-        public float Loudness => _audioMonitor?.Loudness ?? 0;
         
-        public void Start(AudioCaptureType captureType = AudioCaptureType.Default, string name = "",
+        private static AudioMonitorManager _instance;
+        public static AudioMonitorManager Instance => _instance ??= new();
+
+        public static float Loudness => Instance._audioMonitor?.Loudness ?? 0;
+        
+        public static void Start(AudioCaptureType captureType = AudioCaptureType.Default, string name = "",
             string streamName = "Output Device Monitor", string device = "@DEFAULT_MONITOR@", int volume = 65536, int rate = 44100,
             int bufferSize = 2048, int updateInterval = 50)
         {
-            _audioMonitor?.Dispose();
+            Instance._audioMonitor?.Dispose();
             
             captureType = captureType == AudioCaptureType.Default ? GetDefaultCaptureType() : captureType;
             switch (captureType)
             {
-                case AudioCaptureType.PulseAudio: CapturePulseAudio(name, streamName, device, volume, rate, bufferSize); break;
-                case AudioCaptureType.Windows: CaptureWindows(updateInterval); break;
+                case AudioCaptureType.PulseAudio: Instance.CapturePulseAudio(name, streamName, device, volume, rate, bufferSize); break;
+                case AudioCaptureType.Windows: Instance.CaptureWindows(updateInterval); break;
             }
         }
 
@@ -33,13 +38,13 @@ namespace NnUtils.Modules.SystemAudioMonitor
             int volume = 65536, int rate = 44100, int bufferSize = 2048)
         {
             _audioMonitor = new PulseAudioMonitor(name, streamName, device, volume, rate, bufferSize);
-            _             = _audioMonitor.Start();
+            _audioMonitor.Start();
         }
 
         private void CaptureWindows(int updateInterval = 50)
         {
             _audioMonitor = new WindowsAudioMonitor(updateInterval);
-            _             = _audioMonitor.Start();
+            _audioMonitor.Start();
         }
 
         public void Dispose()

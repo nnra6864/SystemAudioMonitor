@@ -7,7 +7,7 @@ namespace NnUtils.Modules.SystemAudioMonitor
     {
         public float Loudness { get; protected set; }
         
-        public async virtual Task Start()
+        public virtual void Start()
         {
             
         }

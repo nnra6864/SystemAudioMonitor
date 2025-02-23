@@ -57,7 +57,7 @@ namespace NnUtils.Modules.SystemAudioMonitor
             UpdateInterval = updateInterval;
         }
 
-        public override async Task Start()
+        public override void Start()
         {
             if (_isRunning) return;
             _isRunning = true;
@@ -70,8 +70,8 @@ namespace NnUtils.Modules.SystemAudioMonitor
             var audioMeterGuid = typeof(IAudioMeterInformation).GUID;
             _device.Activate(ref audioMeterGuid, CLSCTX_ALL, IntPtr.Zero, out var meterObj);
             _meterInfo = (IAudioMeterInformation)meterObj;
-
-            await Task.Run(() => MonitorAudio(_cancellationTokenSource.Token, UpdateInterval));
+            
+            Task.Run(() => MonitorAudio(_cancellationTokenSource.Token, UpdateInterval), _cancellationTokenSource.Token);
         }
 
         private void MonitorAudio(CancellationToken token, int updateIntervalMs)

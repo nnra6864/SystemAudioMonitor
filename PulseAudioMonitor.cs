@@ -10,9 +10,8 @@ namespace NnUtils.Modules.SystemAudioMonitor
 {
     public class PulseAudioMonitor : AudioMonitor
     {
+        private Thread _thread;
         private Process _paMonitorProcess;
-        private bool _isRunning;
-        private CancellationTokenSource _cancellationTokenSource;
 
         public readonly string Name;
         public readonly string StreamName;
@@ -20,22 +19,23 @@ namespace NnUtils.Modules.SystemAudioMonitor
         public readonly int Volume;
         public readonly int Rate;
         public readonly int BufferSize;
+        public readonly int UpdateInterval;
 
-        public PulseAudioMonitor(string name = "", string streamName = "Output Device Monitor", string device = "@DEFAULT_MONITOR@", int volume = 65536, int rate = 44100, int bufferSize = 2048)
+        public PulseAudioMonitor(string name = "", string streamName = "Output Device Monitor", string device = "@DEFAULT_MONITOR@",
+            int volume = 65536, int rate = 44100, int bufferSize = 2048, int updateInterval = 100)
         {
-            Name = name;
-            StreamName = streamName;
-            Device = device;
-            Volume = volume;
-            Rate = rate;
-            BufferSize = bufferSize;
+            Name           = name;
+            StreamName     = streamName;
+            Device         = device;
+            Volume         = volume;
+            Rate           = rate;
+            BufferSize     = bufferSize;
+            UpdateInterval = updateInterval;
         }
-        
-        public override async Task Start()
+
+        public override void Start()
         {
-            if (_isRunning) return;
-            _isRunning               = true;
-            _cancellationTokenSource = new();
+            if (_thread is { IsAlive: true }) return;
 
             _paMonitorProcess = new()
             {
@@ -51,17 +51,19 @@ namespace NnUtils.Modules.SystemAudioMonitor
 
             _paMonitorProcess.Start();
 
-            await Task.Run(() => MonitorAudio(_cancellationTokenSource.Token, BufferSize), _cancellationTokenSource.Token);
+            _thread = new(() => MonitorAudio(BufferSize));
+            _thread.Start();
+            //Task.Run(() => MonitorAudio(_cancellationTokenSource.Token, BufferSize), _cancellationTokenSource.Token);
         }
 
-        private void MonitorAudio(CancellationToken token, int bufferSize)
+        private void MonitorAudio(int bufferSize)
         {
             var stream = _paMonitorProcess.StandardOutput.BaseStream;
             var buffer = new byte[bufferSize];
 
             try
             {
-                while (!token.IsCancellationRequested)
+                while (true)
                 {
                     var bytesRead = stream.Read(buffer, 0, buffer.Length);
                     if (bytesRead <= 0) continue;
@@ -73,10 +75,6 @@ namespace NnUtils.Modules.SystemAudioMonitor
             catch (IOException)
             {
                 
-            }
-            finally
-            {
-                _isRunning = false;
             }
         }
 
@@ -96,21 +94,17 @@ namespace NnUtils.Modules.SystemAudioMonitor
 
         private void StopMonitoring()
         {
-            if (!_isRunning) return;
-            _cancellationTokenSource?.Cancel();
+            if (_thread is not { IsAlive: true }) return;
 
-            if (!_paMonitorProcess.HasExited)
-            {
-                _paMonitorProcess.Kill();
-                _paMonitorProcess.Dispose();
-            }
-
-            _isRunning = false;
+            _thread.Abort();
+            _paMonitorProcess.Kill();
+            _paMonitorProcess.Dispose();
         }
 
         public override void Dispose()
         {
             StopMonitoring();
+            Debug.Log("HERE");
         }
     }
 }
