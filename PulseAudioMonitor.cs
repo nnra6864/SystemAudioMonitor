@@ -104,7 +104,6 @@ namespace NnUtils.Modules.SystemAudioMonitor
         public override void Dispose()
         {
             StopMonitoring();
-            Debug.Log("HERE");
         }
     }
 }

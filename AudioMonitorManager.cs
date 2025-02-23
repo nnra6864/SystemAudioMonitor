@@ -43,8 +43,8 @@ namespace NnUtils.Modules.SystemAudioMonitor
 
         private void CaptureWindows(int updateInterval = 50)
         {
-            _audioMonitor = new WindowsAudioMonitor(updateInterval);
-            _audioMonitor.Start();
+            //_audioMonitor = new WindowsAudioMonitor(updateInterval);
+            //_audioMonitor.Start();
         }
 
         public void Dispose()
