@@ -2,9 +2,6 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
-using JetBrains.Annotations;
-using Debug = UnityEngine.Debug;
 
 namespace NnUtils.Modules.SystemAudioMonitor
 {
@@ -12,6 +9,7 @@ namespace NnUtils.Modules.SystemAudioMonitor
     {
         private Thread _thread;
         private Process _paMonitorProcess;
+        private float _loudness;
 
         public readonly string Name;
         public readonly string StreamName;
@@ -19,10 +17,9 @@ namespace NnUtils.Modules.SystemAudioMonitor
         public readonly int Volume;
         public readonly int Rate;
         public readonly int BufferSize;
-        public readonly int UpdateInterval;
 
         public PulseAudioMonitor(string name = "", string streamName = "Output Device Monitor", string device = "@DEFAULT_MONITOR@",
-            int volume = 65536, int rate = 44100, int bufferSize = 2048, int updateInterval = 100)
+            int volume = 65536, int rate = 44100, int bufferSize = 2048)
         {
             Name           = name;
             StreamName     = streamName;
@@ -30,12 +27,13 @@ namespace NnUtils.Modules.SystemAudioMonitor
             Volume         = volume;
             Rate           = rate;
             BufferSize     = bufferSize;
-            UpdateInterval = updateInterval;
         }
 
         public override void Start()
         {
             if (_thread is { IsAlive: true }) return;
+
+            Loudness = () => _loudness;
 
             _paMonitorProcess = new()
             {
@@ -69,7 +67,7 @@ namespace NnUtils.Modules.SystemAudioMonitor
                     if (bytesRead <= 0) continue;
 
                     float volume = GetAudioLevel(buffer, bytesRead);
-                    Loudness = volume;
+                    _loudness = volume;
                 }
             }
             catch (IOException)

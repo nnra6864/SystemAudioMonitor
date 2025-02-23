@@ -9,11 +9,11 @@ namespace NnUtils.Modules.SystemAudioMonitor
         private static AudioMonitorManager _instance;
         public static AudioMonitorManager Instance => _instance ??= new();
 
-        public static float Loudness => Instance._audioMonitor?.Loudness ?? 0;
+        public static float Loudness => Instance._audioMonitor?.Loudness() ?? 0;
         
         public static void Start(AudioCaptureType captureType = AudioCaptureType.Default, string name = "",
             string streamName = "Output Device Monitor", string device = "@DEFAULT_MONITOR@", int volume = 65536, int rate = 44100,
-            int bufferSize = 2048, int updateInterval = 50)
+            int bufferSize = 2048)
         {
             Instance._audioMonitor?.Dispose();
             
@@ -21,7 +21,7 @@ namespace NnUtils.Modules.SystemAudioMonitor
             switch (captureType)
             {
                 case AudioCaptureType.PulseAudio: Instance.CapturePulseAudio(name, streamName, device, volume, rate, bufferSize); break;
-                case AudioCaptureType.Windows: Instance.CaptureWindows(updateInterval); break;
+                case AudioCaptureType.Windows: Instance.CaptureWindows(); break;
             }
         }
 
@@ -41,10 +41,10 @@ namespace NnUtils.Modules.SystemAudioMonitor
             _audioMonitor.Start();
         }
 
-        private void CaptureWindows(int updateInterval = 50)
+        private void CaptureWindows()
         {
-            //_audioMonitor = new WindowsAudioMonitor(updateInterval);
-            //_audioMonitor.Start();
+            _audioMonitor = new WindowsAudioMonitor();
+            _audioMonitor.Start();
         }
 
         public void Dispose()

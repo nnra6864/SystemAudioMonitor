@@ -1,108 +1,86 @@
 using System;
 using System.Runtime.InteropServices;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace NnUtils.Modules.SystemAudioMonitor
 {
     public class WindowsAudioMonitor : AudioMonitor
     {
-        #region Native Methods and Types
+        public override void Start() => Loudness = GetCurrentLoudness;
+
+        // COM class for device enumerator
+        [ComImport]
+        [Guid("BCDE0395-E52F-467C-8E3D-C4579291692E")]
+        private class MMDeviceEnumeratorComObject { }
+
+        // IMMDeviceEnumerator interface
         [ComImport]
         [Guid("A95664D2-9614-4F35-A746-DE8DB63617E6")]
-        private class MMDeviceEnumerator { }
-
-        [Guid("87CE5498-68D6-44E5-9215-6DA47EF883D8")]
         [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         private interface IMMDeviceEnumerator
         {
+            // Skipping first method(s)
             int NotImpl1();
-            int NotImpl2();
+
             [PreserveSig]
-            int GetDefaultAudioEndpoint(int dataFlow, int role, out IMMDevice ppEndpoint);
+            int GetDefaultAudioEndpoint(DataFlow dataFlow, Role role, out IMMDevice ppDevice);
         }
 
+        private enum DataFlow { Render, Capture, All }
+        private enum Role { Console, Multimedia, Communications }
+
+        // IMMDevice interface
+        [ComImport]
         [Guid("D666063F-1587-4E43-81F1-B948E807363F")]
         [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         private interface IMMDevice
         {
             [PreserveSig]
-            int Activate(ref Guid iid, int dwClsCtx, IntPtr pActivationParams, [MarshalAs(UnmanagedType.IUnknown)] out object ppInterface);
+            int Activate(ref Guid iid, CLSCTX dwClsCtx, IntPtr pActivationParams, out IAudioMeterInformation ppInterface);
         }
 
-        [Guid("C02216F6-8C67-4B5B-9D00-D008E73E0064")]
+        [Flags]
+        private enum CLSCTX
+        {
+            InprocServer = 0x1,
+            InprocHandler = 0x2,
+            LocalServer = 0x4,
+            RemoteServer = 0x10,
+            All = InprocServer | InprocHandler | LocalServer | RemoteServer
+        }
+
+        // IAudioMeterInformation interface for getting the current peak value
+        [ComImport]
+        [Guid("C02216F6-5E12-4ADF-8CF2-1DBA2E5C7A1D")]
         [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         private interface IAudioMeterInformation
         {
-            float GetPeakValue();
+            [PreserveSig]
+            int GetPeakValue(out float pfPeak);
         }
 
-        private const int CLSCTX_ALL = 0x1 | 0x2 | 0x4 | 0x10;
-        private const int DEVICE_STATE_ACTIVE = 0x1;
-        private const int ROLE_MULTIMEDIA = 1;
-        private const int DATAFLOW_RENDER = 1; // output devices
-        #endregion
-
-        private IMMDeviceEnumerator _deviceEnumerator;
-        private IMMDevice _device;
-        private IAudioMeterInformation _meterInfo;
-        private bool _isRunning;
-        private CancellationTokenSource _cancellationTokenSource;
-
-        public readonly int UpdateInterval;
-
-        public WindowsAudioMonitor(int updateInterval = 50)
+        // Function that retrieves the current loudness as a float
+        private float GetCurrentLoudness()
         {
-            _deviceEnumerator = new MMDeviceEnumerator() as IMMDeviceEnumerator;
-            UpdateInterval = updateInterval;
-        }
-
-        public override void Start()
-        {
-            if (_isRunning) return;
-            _isRunning = true;
-            _cancellationTokenSource = new();
-
-            // Get the default audio output device
-            _deviceEnumerator.GetDefaultAudioEndpoint(DATAFLOW_RENDER, ROLE_MULTIMEDIA, out _device);
-
-            // Get the meter information interface
-            var audioMeterGuid = typeof(IAudioMeterInformation).GUID;
-            _device.Activate(ref audioMeterGuid, CLSCTX_ALL, IntPtr.Zero, out var meterObj);
-            _meterInfo = (IAudioMeterInformation)meterObj;
-            
-            Task.Run(() => MonitorAudio(_cancellationTokenSource.Token, UpdateInterval), _cancellationTokenSource.Token);
-        }
-
-        private void MonitorAudio(CancellationToken token, int updateIntervalMs)
-        {
-            try
-            {
-                while (!token.IsCancellationRequested)
-                {
-                    Loudness = _meterInfo.GetPeakValue();
-                    Thread.Sleep(updateIntervalMs);
-                }
-            }
-            finally
-            {
-                _isRunning = false;
-            }
-        }
-
-        private void StopMonitoring()
-        {
-            if (!_isRunning) return;
-            _cancellationTokenSource?.Cancel();
-            _isRunning = false;
-        }
-
-        public override void Dispose()
-        {
-            StopMonitoring();
-            if (_meterInfo != null) Marshal.ReleaseComObject(_meterInfo);
-            if (_device != null) Marshal.ReleaseComObject(_device);
-            if (_deviceEnumerator != null) Marshal.ReleaseComObject(_deviceEnumerator);
+            // Create the device enumerator
+            IMMDeviceEnumerator enumerator = (IMMDeviceEnumerator)new MMDeviceEnumeratorComObject();
+        
+            // Get the default audio rendering device (multimedia role)
+            IMMDevice device;
+            int hr = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia, out device);
+            if (hr != 0) Marshal.ThrowExceptionForHR(hr);
+        
+            // Activate the IAudioMeterInformation interface on the device
+            Guid IID_IAudioMeterInformation = typeof(IAudioMeterInformation).GUID;
+            IAudioMeterInformation meter;
+            hr = device.Activate(ref IID_IAudioMeterInformation, CLSCTX.InprocServer, IntPtr.Zero, out meter);
+            if (hr != 0) Marshal.ThrowExceptionForHR(hr);
+        
+            // Get and return the current peak (loudness) value
+            float peak;
+            hr = meter.GetPeakValue(out peak);
+            if (hr != 0) Marshal.ThrowExceptionForHR(hr);
+        
+            return peak;
         }
     }
 }
