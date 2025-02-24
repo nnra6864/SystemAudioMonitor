@@ -67,7 +67,7 @@ namespace NnUtils.Modules.SystemAudioMonitor
                     if (bytesRead <= 0) continue;
 
                     float volume = GetAudioLevel(buffer, bytesRead);
-                    _loudness = volume;
+                    _loudness = volume * 10;
                 }
             }
             catch (IOException)
